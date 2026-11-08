@@ -1,5 +1,7 @@
 # ⛅ Zaiim's Weather App
 
+**[🔴 Live Demo](https://zaiim23.github.io/weather-app/)**
+
 A high-end, production-ready weather web application designed with the precision of Apple, Linear, and Vercel. Built with vanilla JavaScript (ES6+), HTML5, and CSS3, featuring smart debounced search autocomplete, real-time hourly and 7-day forecasts, geolocation support, and a sleek dark glassmorphism UI with zero emojis.
 
 ---
