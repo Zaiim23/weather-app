@@ -1,12 +1,11 @@
 /**
  * app.js — Zaiim's Weather App Frontend Controller
- * Manages UI state, smart debounced search autocomplete, event listeners, and data rendering.
  */
 
 // Application State
 const state = {
-    unit: localStorage.getItem('zaiim_weather_unit') || 'celsius', // 'celsius' or 'fahrenheit'
-    currentLocation: null, // { latitude, longitude, name, country, admin1 }
+    unit: localStorage.getItem('zaiim_weather_unit') || 'celsius',
+    currentLocation: null,
     autocompleteIndex: -1,
     debounceTimer: null
 };
@@ -17,6 +16,7 @@ const dom = {
     clearSearchBtn: document.getElementById('clear-search'),
     autocompleteDropdown: document.getElementById('autocomplete-dropdown'),
     quickPills: document.getElementById('quick-pills'),
+    themeToggle: document.getElementById('theme-toggle'),
     unitToggle: document.getElementById('unit-toggle'),
     unitLabel: document.getElementById('unit-label'),
     geoBtn: document.getElementById('geo-btn'),
@@ -59,6 +59,11 @@ const dom = {
  * Initialize App on DOM Content Loaded
  */
 document.addEventListener('DOMContentLoaded', () => {
+    // Theme initialization
+    const savedTheme = localStorage.getItem('zaiim_theme') || 'dark';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+    updateThemeIcon(savedTheme);
+
     updateUnitToggleUI();
     initEventListeners();
     
@@ -74,7 +79,6 @@ document.addEventListener('DOMContentLoaded', () => {
         showEmptyState();
     }
 
-    // Render all static Lucide icons on initial load
     lucide.createIcons();
 });
 
@@ -82,6 +86,17 @@ document.addEventListener('DOMContentLoaded', () => {
  * Sets up all interactive event listeners.
  */
 function initEventListeners() {
+    // Theme Toggle
+    dom.themeToggle.addEventListener('click', () => {
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+        
+        document.documentElement.setAttribute('data-theme', newTheme);
+        localStorage.setItem('zaiim_theme', newTheme);
+        updateThemeIcon(newTheme);
+    });
+
+    // Search input typing with debounce (300ms)
     dom.searchInput.addEventListener('input', (e) => {
         const query = e.target.value.trim();
         
@@ -169,6 +184,11 @@ function initEventListeners() {
     });
 }
 
+function updateThemeIcon(theme) {
+    dom.themeToggle.innerHTML = theme === 'light' ? '<i data-lucide="moon"></i>' : '<i data-lucide="sun"></i>';
+    lucide.createIcons();
+}
+
 function updateUnitToggleUI() {
     dom.unitLabel.textContent = state.unit === 'fahrenheit' ? '°F' : '°C';
 }
@@ -253,9 +273,7 @@ function handleGeolocation() {
             const lat = position.coords.latitude;
             const lon = position.coords.longitude;
             
-            // Use reverse geocoding to get the actual city name
             const location = await reverseGeocode(lat, lon);
-            
             await loadWeather(location, true);
         },
         (error) => {
@@ -400,8 +418,6 @@ function showEmptyState() {
     dom.stateLoading.classList.add('hidden');
     dom.stateDashboard.classList.add('hidden');
     dom.stateEmpty.classList.remove('hidden');
-    
-    // Ensure icons inside empty state render correctly
     lucide.createIcons();
 }
 

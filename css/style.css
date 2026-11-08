@@ -1,8 +1,8 @@
 /* ==========================================
-   Zaiim's Weather App — Premium Design System & Stylesheet
-   Design Language: Apple / Linear / Vercel
+   Zaiim's Weather App — Premium Design System
    ========================================== */
 
+/* Dark Mode (Default) */
 :root {
     --bg-base: #09090b;
     --bg-surface: #121215;
@@ -20,7 +20,6 @@
     --accent-glow: rgba(59, 130, 246, 0.25);
     
     --success: #10b981;
-    --warning: #f59e0b;
     --danger: #ef4444;
     
     --radius-sm: 8px;
@@ -30,6 +29,22 @@
     
     --shadow-glass: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
     --transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Light Mode Overrides */
+[data-theme="light"] {
+    --bg-base: #f8fafc;
+    --bg-surface: #ffffff;
+    --bg-card: rgba(255, 255, 255, 0.65);
+    --bg-card-hover: rgba(241, 245, 249, 0.85);
+    --border-color: rgba(0, 0, 0, 0.08);
+    --border-hover: rgba(0, 0, 0, 0.16);
+    
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --text-muted: #64748b;
+    
+    --shadow-glass: 0 8px 32px 0 rgba(15, 23, 42, 0.08);
 }
 
 /* Reset & Box Sizing */
@@ -48,6 +63,7 @@ body {
     flex-direction: column;
     overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* Noscript */
@@ -69,8 +85,12 @@ body {
     z-index: -1;
     overflow: hidden;
     pointer-events: none;
-    transition: background 1s ease;
+    transition: background 0.4s ease;
     background: radial-gradient(circle at 50% 0%, #1e1b4b 0%, #09090b 70%);
+}
+
+[data-theme="light"] .app-background {
+    background: radial-gradient(circle at 50% 0%, #e0e7ff 0%, #f8fafc 70%);
 }
 
 .ambient-glow {
@@ -80,7 +100,7 @@ body {
     border-radius: 50%;
     filter: blur(100px);
     opacity: 0.15;
-    transition: background 1s ease;
+    transition: background 0.4s ease;
 }
 
 .glow-1 {
@@ -95,7 +115,7 @@ body {
     background: #8b5cf6;
 }
 
-/* Toast Notification (Top Center, floating) */
+/* Toast Notification */
 .toast-notification {
     position: fixed;
     top: 1.5rem;
@@ -104,7 +124,7 @@ body {
     z-index: 1000;
     min-width: 320px;
     max-width: 500px;
-    background: rgba(239, 68, 68, 0.85);
+    background: rgba(239, 68, 68, 0.9);
     border: 1px solid rgba(239, 68, 68, 0.4);
     backdrop-filter: blur(16px);
     padding: 0.85rem 1.25rem;
@@ -115,12 +135,12 @@ body {
     color: #ffffff;
     font-size: 0.9rem;
     font-weight: 600;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
     animation: slideDownToast 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .toast-notification.success {
-    background: rgba(16, 185, 129, 0.85);
+    background: rgba(16, 185, 129, 0.9);
     border-color: rgba(16, 185, 129, 0.4);
     color: #ffffff;
 }
@@ -183,9 +203,7 @@ body {
     font-size: 1.35rem;
     font-weight: 800;
     letter-spacing: -0.02em;
-    background: linear-gradient(135deg, #ffffff 0%, #a1a1aa 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: var(--text-primary);
 }
 
 .tagline {
@@ -232,7 +250,7 @@ body {
     color: var(--accent);
 }
 
-#unit-toggle {
+#unit-toggle, #theme-toggle {
     width: 42px;
     height: 42px;
     padding: 0;
@@ -309,7 +327,7 @@ body {
 
 .clear-search-btn:hover {
     color: var(--text-primary);
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(128, 128, 128, 0.1);
 }
 
 .clear-search-btn svg {
@@ -326,7 +344,7 @@ body {
     background: var(--bg-surface);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-md);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
     backdrop-filter: blur(24px);
     max-height: 320px;
     overflow-y: auto;
@@ -340,7 +358,7 @@ body {
     justify-content: space-between;
     cursor: pointer;
     transition: background 0.15s ease;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    border-bottom: 1px solid var(--border-color);
 }
 
 .autocomplete-item:last-child {
@@ -349,7 +367,7 @@ body {
 
 .autocomplete-item:hover,
 .autocomplete-item.highlighted {
-    background: rgba(59, 130, 246, 0.15);
+    background: rgba(59, 130, 246, 0.1);
 }
 
 .city-main-info {
@@ -407,7 +425,7 @@ body {
     backdrop-filter: blur(24px);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-glass);
-    transition: var(--transition);
+    transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .glass-card:hover {
@@ -483,7 +501,7 @@ body {
 .skeleton-hero {
     height: 260px;
     border-radius: var(--radius-lg);
-    background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.03) 75%);
+    background: linear-gradient(90deg, rgba(128,128,128,0.05) 25%, rgba(128,128,128,0.1) 50%, rgba(128,128,128,0.05) 75%);
     background-size: 200% 100%;
     animation: shimmer 1.5s infinite;
 }
@@ -497,7 +515,7 @@ body {
 .skeleton-card {
     height: 120px;
     border-radius: var(--radius-md);
-    background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.03) 75%);
+    background: linear-gradient(90deg, rgba(128,128,128,0.05) 25%, rgba(128,128,128,0.1) 50%, rgba(128,128,128,0.05) 75%);
     background-size: 200% 100%;
     animation: shimmer 1.5s infinite;
 }
@@ -536,6 +554,11 @@ body {
     flex-direction: column;
     justify-content: space-between;
     background: linear-gradient(135deg, rgba(24, 24, 27, 0.85) 0%, rgba(30, 41, 59, 0.55) 100%);
+    transition: background 0.3s ease;
+}
+
+[data-theme="light"] .current-hero {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(219, 234, 254, 0.7) 100%);
 }
 
 .hero-top {
@@ -559,7 +582,7 @@ body {
 
 .weather-timestamp {
     font-size: 0.75rem;
-    background: rgba(255, 255, 255, 0.08);
+    background: rgba(128, 128, 128, 0.15);
     padding: 0.3rem 0.75rem;
     border-radius: var(--radius-full);
     color: var(--text-secondary);
@@ -735,7 +758,7 @@ body {
     overflow-x: auto;
     padding-bottom: 0.5rem;
     scrollbar-width: thin;
-    scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+    scrollbar-color: rgba(128, 128, 128, 0.3) transparent;
 }
 
 .hourly-scroll::-webkit-scrollbar {
@@ -743,14 +766,14 @@ body {
 }
 
 .hourly-scroll::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(128, 128, 128, 0.3);
     border-radius: var(--radius-full);
 }
 
 .hourly-card {
     min-width: 80px;
     padding: 1rem 0.5rem;
-    background: rgba(255, 255, 255, 0.02);
+    background: rgba(128, 128, 128, 0.05);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-md);
     display: flex;
@@ -761,7 +784,7 @@ body {
 }
 
 .hourly-card:hover {
-    background: rgba(255, 255, 255, 0.06);
+    background: rgba(128, 128, 128, 0.1);
     border-color: var(--border-hover);
 }
 
@@ -798,14 +821,14 @@ body {
     grid-template-columns: 1.5fr 1fr 2fr 1fr;
     align-items: center;
     padding: 0.75rem 1rem;
-    background: rgba(255, 255, 255, 0.02);
+    background: rgba(128, 128, 128, 0.05);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-md);
     transition: var(--transition);
 }
 
 .forecast-row:hover {
-    background: rgba(255, 255, 255, 0.06);
+    background: rgba(128, 128, 128, 0.1);
     border-color: var(--border-hover);
 }
 
@@ -849,7 +872,7 @@ body {
 .temp-bar-bg {
     flex: 1;
     height: 6px;
-    background: rgba(255, 255, 255, 0.08);
+    background: rgba(128, 128, 128, 0.2);
     border-radius: var(--radius-full);
     position: relative;
     overflow: hidden;

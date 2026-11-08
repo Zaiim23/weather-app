@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Zaiim's Weather App</title>
-    <meta name="description" content="A high-end, production-ready weather application with real-time forecasting, smart autocomplete search, and sleek Apple/Linear-inspired dark UI.">
+    <meta name="description" content="A high-end, production-ready weather application with real-time forecasting, smart autocomplete search, and sleek Apple/Linear-inspired UI.">
     <!-- Google Fonts: Plus Jakarta Sans -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -44,9 +44,15 @@
                 </div>
             </div>
             <div class="header-actions">
+                <!-- Theme Toggle Button -->
+                <button id="theme-toggle" class="btn-glass btn-icon" title="Toggle light/dark mode">
+                    <i data-lucide="sun"></i>
+                </button>
+                <!-- Unit Toggle Button -->
                 <button id="unit-toggle" class="btn-glass" title="Toggle temperature unit">
                     <span id="unit-label">°C</span>
                 </button>
+                <!-- Geolocation Button -->
                 <button id="geo-btn" class="btn-glass btn-icon-text" title="Use current location">
                     <i data-lucide="navigation"></i>
                     <span>Nearby</span>
