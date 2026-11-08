@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zaiim's Weather App</title>
+    <meta name="description" content="A high-end, production-ready weather application with real-time forecasting, smart autocomplete search, and sleek Apple/Linear-inspired dark UI.">
+    <!-- Google Fonts: Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <noscript>
+        <div class="noscript-banner">
+            JavaScript is required to experience Zaiim's Weather App. Please enable JavaScript in your browser settings.
+        </div>
+    </noscript>
+
+    <div id="app-background" class="app-background">
+        <div class="ambient-glow glow-1"></div>
+        <div class="ambient-glow glow-2"></div>
+    </div>
+
+    <!-- Toast / Notification Banner (Top Center) -->
+    <div id="toast-notification" class="toast-notification hidden">
+        <i data-lucide="alert-circle" class="toast-icon"></i>
+        <span id="toast-message">Notification message here</span>
+    </div>
+
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="brand">
+                <div class="brand-logo">
+                    <i data-lucide="cloud-sun" class="brand-icon"></i>
+                </div>
+                <div class="brand-info">
+                    <h1>Zaiim</h1>
+                    <span class="tagline">Weather App</span>
+                </div>
+            </div>
+            <div class="header-actions">
+                <button id="unit-toggle" class="btn-glass" title="Toggle temperature unit">
+                    <span id="unit-label">°C</span>
+                </button>
+                <button id="geo-btn" class="btn-glass btn-icon-text" title="Use current location">
+                    <i data-lucide="navigation"></i>
+                    <span>Nearby</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="app-main">
+            <!-- Search & Autocomplete Section -->
+            <section class="search-section">
+                <div class="search-wrapper">
+                    <div class="search-input-container">
+                        <i data-lucide="search" class="search-icon"></i>
+                        <input 
+                            type="text" 
+                            id="search-input" 
+                            placeholder="Search city, country, or region (e.g. Tokyo, Paris, New York)..." 
+                            autocomplete="off"
+                            spellcheck="false"
+                            aria-expanded="false"
+                            aria-autocomplete="list"
+                        >
+                        <button id="clear-search" class="clear-search-btn hidden" title="Clear input">
+                            <i data-lucide="x"></i>
+                        </button>
+                    </div>
+                    <!-- Autocomplete Dropdown -->
+                    <div id="autocomplete-dropdown" class="autocomplete-dropdown hidden" role="listbox">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+
+                <!-- Quick Pills -->
+                <div class="quick-pills" id="quick-pills">
+                    <button class="pill" data-city="Tokyo" data-lat="35.6762" data-lon="139.6503">Tokyo</button>
+                    <button class="pill" data-city="New York" data-lat="40.7128" data-lon="-74.0060">New York</button>
+                    <button class="pill" data-city="London" data-lat="51.5074" data-lon="-0.1278">London</button>
+                    <button class="pill" data-city="Paris" data-lat="48.8566" data-lon="2.3522">Paris</button>
+                    <button class="pill" data-city="Reykjavik" data-lat="64.1466" data-lon="-21.9426">Reykjavik</button>
+                    <button class="pill" data-city="Sydney" data-lat="-33.8688" data-lon="151.2093">Sydney</button>
+                </div>
+            </section>
+
+            <!-- Dynamic Content States -->
+            <div id="content-viewport" class="content-viewport">
+                <!-- Empty / Welcome State -->
+                <div id="state-empty" class="state-card">
+                    <div class="state-icon-wrapper">
+                        <i data-lucide="compass" class="state-svg"></i>
+                    </div>
+                    <h2>Explore the atmosphere</h2>
+                    <p>Search for any location worldwide or use your current location to experience hyper-accurate meteorological insights.</p>
+                </div>
+
+                <!-- Loading Skeleton State -->
+                <div id="state-loading" class="state-card state-loading hidden">
+                    <div class="skeleton-hero"></div>
+                    <div class="skeleton-grid">
+                        <div class="skeleton-card"></div>
+                        <div class="skeleton-card"></div>
+                        <div class="skeleton-card"></div>
+                        <div class="skeleton-card"></div>
+                    </div>
+                </div>
+
+                <!-- Weather Dashboard -->
+                <div id="state-dashboard" class="weather-dashboard hidden">
+                    <!-- Top Row: Hero Current Weather & Key Metrics -->
+                    <div class="dashboard-grid">
+                        <!-- Current Weather Hero Card -->
+                        <div class="glass-card current-hero">
+                            <div class="hero-top">
+                                <div>
+                                    <h2 id="weather-city" class="weather-city">--</h2>
+                                    <p id="weather-region" class="weather-region">--</p>
+                                </div>
+                                <span id="weather-time" class="weather-timestamp">--</span>
+                            </div>
+
+                            <div class="hero-main">
+                                <div class="temp-group">
+                                    <span id="weather-temp" class="weather-temp">--</span>
+                                    <span id="weather-unit-symbol" class="weather-unit">°C</span>
+                                </div>
+                                <div class="condition-group">
+                                    <div id="condition-icon-container" class="condition-icon-wrapper">
+                                        <!-- Dynamic Lucide Icon inserted here -->
+                                    </div>
+                                    <span id="weather-condition" class="weather-condition">--</span>
+                                </div>
+                            </div>
+
+                            <div class="hero-footer">
+                                <div class="high-low">
+                                    <span class="hl-item">
+                                        <i data-lucide="arrow-up" class="hl-icon"></i>
+                                        <span>High: <strong id="weather-high">--°</strong></span>
+                                    </span>
+                                    <span class="hl-item">
+                                        <i data-lucide="arrow-down" class="hl-icon"></i>
+                                        <span>Low: <strong id="weather-low">--°</strong></span>
+                                    </span>
+                                </div>
+                                <div class="feels-like-badge">
+                                    <span>Feels like <strong id="weather-feels">--°</strong></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Metrics Grid -->
+                        <div class="metrics-grid">
+                            <!-- Humidity -->
+                            <div class="glass-card metric-card">
+                                <div class="metric-header">
+                                    <i data-lucide="droplets" class="metric-icon"></i>
+                                    <span>Humidity</span>
+                                </div>
+                                <div class="metric-body">
+                                    <span id="metric-humidity" class="metric-value">--%</span>
+                                    <span id="metric-humidity-desc" class="metric-desc">--</span>
+                                </div>
+                            </div>
+
+                            <!-- Wind Speed -->
+                            <div class="glass-card metric-card">
+                                <div class="metric-header">
+                                    <i data-lucide="wind" class="metric-icon"></i>
+                                    <span>Wind Speed</span>
+                                </div>
+                                <div class="metric-body">
+                                    <span id="metric-wind" class="metric-value">-- km/h</span>
+                                    <span id="metric-wind-desc" class="metric-desc">--</span>
+                                </div>
+                            </div>
+
+                            <!-- UV Index -->
+                            <div class="glass-card metric-card">
+                                <div class="metric-header">
+                                    <i data-lucide="sun" class="metric-icon"></i>
+                                    <span>UV Index</span>
+                                </div>
+                                <div class="metric-body">
+                                    <span id="metric-uv" class="metric-value">--</span>
+                                    <span id="metric-uv-desc" class="metric-desc">--</span>
+                                </div>
+                            </div>
+
+                            <!-- Pressure -->
+                            <div class="glass-card metric-card">
+                                <div class="metric-header">
+                                    <i data-lucide="gauge" class="metric-icon"></i>
+                                    <span>Pressure</span>
+                                </div>
+                                <div class="metric-body">
+                                    <span id="metric-pressure" class="metric-value">-- hPa</span>
+                                    <span id="metric-pressure-desc" class="metric-desc">Standard</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Middle Row: Hourly Forecast (Scrollable Timeline) -->
+                    <div class="glass-card hourly-section">
+                        <div class="section-header">
+                            <i data-lucide="clock" class="section-icon"></i>
+                            <h3>Hourly Forecast (Next 24 Hours)</h3>
+                        </div>
+                        <div id="hourly-scroll" class="hourly-scroll">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+
+                    <!-- Bottom Row: 7-Day Forecast -->
+                    <div class="glass-card forecast-section">
+                        <div class="section-header">
+                            <i data-lucide="calendar" class="section-icon"></i>
+                            <h3>7-Day Extended Forecast</h3>
+                        </div>
+                        <div id="forecast-list" class="forecast-list">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            <p>Designed with precision. Meteorological data powered by <a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">Open-Meteo</a>.</p>
+        </footer>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/api.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
