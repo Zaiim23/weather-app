@@ -1,6 +1,8 @@
 # ⛅ Zaiim's Weather App
 
-**[🔴 Live Demo](https://zaiim23.github.io/weather-app/)**
+[![Lint](https://github.com/Zaiim23/weather-app/actions/workflows/lint.yml/badge.svg)](https://github.com/Zaiim23/weather-app/actions/workflows/lint.yml)
+
+### [🔴 Live Demo](https://zaiim23.github.io/weather-app/)
 
 A high-end, production-ready weather web application designed with the precision of Apple, Linear, and Vercel. Built with vanilla JavaScript (ES6+), HTML5, and CSS3, featuring smart debounced search autocomplete, real-time hourly and 7-day forecasts, geolocation support, and a sleek dark glassmorphism UI with zero emojis.
 
@@ -43,8 +45,13 @@ simple-weather-app/
 ├── css/
 │   └── style.css       # Premium dark glassmorphism stylesheet
 ├── js/
-│   ├── api.js          # API fetch wrappers, pressure_msl handling, & WMO weather code mapping
-│   └── app.js          # Autocomplete debounce, state management, & DOM rendering
+│   ├── api.js          # Open-Meteo fetch wrappers & WMO weather code mapping
+│   ├── ui.js           # DOM caching, dashboard rendering, & UI state helpers
+│   └── app.js          # Application state, debounce, event listeners, & loading flow
+├── .github/
+│   └── workflows/
+│       └── lint.yml    # JavaScript syntax, asset, and CSS checks
+├── LICENSE
 └── README.md           # Project documentation
 ```
 
