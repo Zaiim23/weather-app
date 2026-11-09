@@ -291,8 +291,9 @@ function handleGeolocation() {
 async function loadWeather(location, saveToStorage = true) {
     showLoadingState();
     
+    state.currentLocation = location;
+
     if (saveToStorage) {
-        state.currentLocation = location;
         localStorage.setItem('zaiim_last_location', JSON.stringify(location));
     }
 
