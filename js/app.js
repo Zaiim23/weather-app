@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const theme = localStorage.getItem('zaiim_theme') || 'dark';
     document.documentElement.dataset.theme = theme;
     setThemeIcon(theme);
-    paintUnit();
+    paintUnits();
     bind();
 
     console.debug(`[wx] boot ${theme} / ${state.unit} / ${state.precipUnit}`);
@@ -110,7 +110,15 @@ function bind() {
     dom.unitBtn.addEventListener('click', async () => {
         state.unit = state.unit === 'celsius' ? 'fahrenheit' : 'celsius';
         localStorage.setItem('zaiim_weather_unit', state.unit);
-        paintUnit();
+        paintUnits();
+
+        if (state.loc) await loadWx(state.loc, false);
+    });
+
+    dom.precipBtn.addEventListener('click', async () => {
+        state.precipUnit = state.precipUnit === 'inch' ? 'mm' : 'inch';
+        localStorage.setItem('zaiim_precip_unit', state.precipUnit);
+        paintUnits();
 
         if (state.loc) await loadWx(state.loc, false);
     });

@@ -8,6 +8,8 @@ const dom = {
     themeBtn: $('theme-toggle'),
     unitBtn: $('unit-toggle'),
     unitLbl: $('unit-label'),
+    precipBtn: $('precip-toggle'),
+    precipLbl: $('precip-label'),
     geoBtn: $('geo-btn'),
     toast: $('toast-notification'),
     toastMsg: $('toast-message'),
@@ -42,14 +44,16 @@ const dom = {
 
 const fmtTemp = (v) => `${Math.round(v)}°`;
 const unitSym = () => state.unit === 'fahrenheit' ? '°F' : '°C';
+const precipSym = () => state.precipUnit === 'inch' ? 'in' : 'mm';
 
 function setThemeIcon(theme) {
     dom.themeBtn.innerHTML = `<i data-lucide="${theme === 'light' ? 'moon' : 'sun'}"></i>`;
     lucide.createIcons();
 }
 
-function paintUnit() {
+function paintUnits() {
     dom.unitLbl.textContent = unitSym();
+    dom.precipLbl.textContent = precipSym();
 }
 
 function renderSuggest(rows) {
