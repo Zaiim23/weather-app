@@ -95,9 +95,10 @@ async function reverse(lat, lon) {
     }
 }
 
-async function getWx(lat, lon, unit = 'celsius') {
+async function getWx(lat, lon, unit = 'celsius', precip = 'mm') {
     const tempUnit = unit === 'fahrenheit' ? 'fahrenheit' : 'celsius';
-    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m,pressure_msl&hourly=temperature_2m,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min,uv_index_max,sunrise,sunset&timezone=auto&temperature_unit=${tempUnit}&wind_speed_unit=kmh`;
+    const precipUnit = precip === 'inch' ? 'inch' : 'mm';
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m,pressure_msl&hourly=temperature_2m,weather_code,precipitation_probability,precipitation&daily=weather_code,temperature_2m_max,temperature_2m_min,uv_index_max,sunrise,sunset,precipitation_probability_max,precipitation_sum&timezone=auto&temperature_unit=${tempUnit}&wind_speed_unit=kmh&precipitation_unit=${precipUnit}`;
 
     const res = await fetch(url).catch(() => {
         throw new Error('Weather service unreachable.');

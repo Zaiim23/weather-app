@@ -1,5 +1,6 @@
 const state = {
     unit: localStorage.getItem('zaiim_weather_unit') || 'celsius',
+    precipUnit: localStorage.getItem('zaiim_precip_unit') || 'mm',
     loc: null,
     idx: -1,
     timer: null
@@ -12,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
     paintUnit();
     bind();
 
-    console.debug(`[wx] boot ${theme} / ${state.unit}`);
+    console.debug(`[wx] boot ${theme} / ${state.unit} / ${state.precipUnit}`);
 
     const cached = localStorage.getItem('zaiim_last_location');
     if (cached) {
@@ -159,7 +160,7 @@ async function loadWx(loc, save = true) {
     }
 
     try {
-        const wx = await getWx(loc.latitude, loc.longitude, state.unit);
+        const wx = await getWx(loc.latitude, loc.longitude, state.unit, state.precipUnit);
         renderWx(loc, wx);
         showDash();
     } catch (err) {
