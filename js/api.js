@@ -1,186 +1,114 @@
-/**
- * api.js — Open-Meteo & Nominatim API Integration and WMO Weather Mapping
- * Handles Geocoding, Reverse Geocoding, Autocomplete Suggestions, and Meteorological Forecasts.
- */
+const WMO = {
+    0: ['Clear sky', 'sun'],
+    1: ['Mainly clear', 'cloud-sun'],
+    2: ['Partly cloudy', 'cloud-sun'],
+    3: ['Overcast', 'cloud'],
+    45: ['Fog', 'cloud-fog'],
+    48: ['Rime fog', 'cloud-fog'],
+    51: ['Light drizzle', 'cloud-rain'],
+    53: ['Drizzle', 'cloud-rain'],
+    55: ['Dense drizzle', 'cloud-rain'],
+    56: ['Freezing drizzle', 'cloud-snow'],
+    57: ['Freezing drizzle', 'cloud-snow'],
+    61: ['Light rain', 'cloud-rain'],
+    63: ['Rain', 'cloud-rain'],
+    65: ['Heavy rain', 'cloud-rain'],
+    66: ['Freezing rain', 'cloud-snow'],
+    67: ['Freezing rain', 'cloud-snow'],
+    71: ['Light snow', 'cloud-snow'],
+    73: ['Snow', 'cloud-snow'],
+    75: ['Heavy snow', 'cloud-snow'],
+    77: ['Snow grains', 'cloud-snow'],
+    80: ['Light showers', 'cloud-rain'],
+    81: ['Showers', 'cloud-rain'],
+    82: ['Heavy showers', 'cloud-rain'],
+    85: ['Snow showers', 'cloud-snow'],
+    86: ['Heavy snow showers', 'cloud-snow'],
+    95: ['Thunderstorm', 'cloud-lightning'],
+    96: ['Thunderstorm, hail', 'cloud-lightning'],
+    99: ['Thunderstorm, heavy hail', 'cloud-lightning']
+};
 
-/**
- * Maps WMO weather interpretation codes to human-readable descriptions and Lucide icon names.
- * @param {number} code - WMO weather code
- * @returns {Object} Object with text description and iconName
- */
-function getWeatherInfo(code) {
-    const weatherMap = {
-        0: { text: "Clear Sky", icon: "sun" },
-        1: { text: "Mainly Clear", icon: "cloud-sun" },
-        2: { text: "Partly Cloudy", icon: "cloud-sun" },
-        3: { text: "Overcast", icon: "cloud" },
-        45: { text: "Foggy", icon: "cloud-fog" },
-        48: { text: "Depositing Rime Fog", icon: "cloud-fog" },
-        51: { text: "Light Drizzle", icon: "cloud-rain" },
-        53: { text: "Moderate Drizzle", icon: "cloud-rain" },
-        55: { text: "Dense Drizzle", icon: "cloud-rain" },
-        56: { text: "Light Freezing Drizzle", icon: "cloud-snow" },
-        57: { text: "Dense Freezing Drizzle", icon: "cloud-snow" },
-        61: { text: "Slight Rain", icon: "cloud-rain" },
-        63: { text: "Moderate Rain", icon: "cloud-rain" },
-        65: { text: "Heavy Rain", icon: "cloud-rain" },
-        66: { text: "Light Freezing Rain", icon: "cloud-snow" },
-        67: { text: "Heavy Freezing Rain", icon: "cloud-snow" },
-        71: { text: "Slight Snow Fall", icon: "cloud-snow" },
-        73: { text: "Moderate Snow Fall", icon: "cloud-snow" },
-        75: { text: "Heavy Snow Fall", icon: "cloud-snow" },
-        77: { text: "Snow Grains", icon: "cloud-snow" },
-        80: { text: "Slight Rain Showers", icon: "cloud-rain" },
-        81: { text: "Moderate Rain Showers", icon: "cloud-rain" },
-        82: { text: "Violent Rain Showers", icon: "cloud-rain" },
-        85: { text: "Slight Snow Showers", icon: "cloud-snow" },
-        86: { text: "Heavy Snow Showers", icon: "cloud-snow" },
-        95: { text: "Thunderstorm", icon: "cloud-lightning" },
-        96: { text: "Thunderstorm with Hail", icon: "cloud-lightning" },
-        99: { text: "Thunderstorm with Heavy Hail", icon: "cloud-lightning" }
-    };
-
-    return weatherMap[code] || { text: "Atmospheric Conditions", icon: "cloud" };
+function wxInfo(code) {
+    const [text, icon] = WMO[code] || ['Cloudy', 'cloud'];
+    return { text, icon };
 }
 
-/**
- * Fetches city suggestions for autocomplete search.
- * @param {string} query - Search query string
- * @returns {Promise<Array>} Array of location objects
- */
-async function fetchCitySuggestions(query) {
-    if (!query || query.trim().length < 2) return [];
+async function suggest(q) {
+    if (!q || q.trim().length < 2) return [];
 
-    const encoded = encodeURIComponent(query.trim());
-    const url = `https://geocoding-api.open-meteo.com/v1/search?name=${encoded}&count=5&language=en&format=json`;
+    const url = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(q.trim())}&count=5&language=en&format=json`;
 
     try {
-        const response = await fetch(url);
-        if (!response.ok) {
-            console.error(`Geocoding HTTP error: ${response.status} ${response.statusText}`);
-            return [];
-        }
-
-        const data = await response.json();
+        const res = await fetch(url);
+        if (!res.ok) return [];
+        const data = await res.json();
         return data.results || [];
-    } catch (error) {
-        console.error("Autocomplete fetch exception:", error);
+    } catch {
         return [];
     }
 }
 
-/**
- * Searches for exact city location.
- * @param {string} cityName - City name
- * @returns {Promise<Object>} Location object
- */
-async function geocodeCity(cityName) {
-    if (!cityName || !cityName.trim()) {
-        throw new Error("Please enter a valid location name.");
-    }
+async function geocode(name) {
+    if (!name || !name.trim()) throw new Error('Enter a location.');
 
-    const encoded = encodeURIComponent(cityName.trim());
-    const url = `https://geocoding-api.open-meteo.com/v1/search?name=${encoded}&count=1&language=en&format=json`;
+    const url = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(name.trim())}&count=1&language=en&format=json`;
 
     try {
-        const response = await fetch(url);
-        if (!response.ok) {
-            const errorText = await response.text();
-            console.error(`Geocoding API error response: ${errorText}`);
-            throw new Error(`Geocoding service error (${response.statusText})`);
-        }
-
-        const data = await response.json();
-        if (!data.results || data.results.length === 0) {
-            throw new Error(`Location "${cityName}" not found. Try searching for another city.`);
-        }
-
+        const res = await fetch(url);
+        if (!res.ok) throw new Error(`Geocoder returned ${res.status}`);
+        const data = await res.json();
+        if (!data.results?.length) throw new Error(`No match for "${name}"`);
         return data.results[0];
-    } catch (error) {
-        if (error.message.includes("not found") || error.message.includes("Please enter")) {
-            throw error;
-        }
-        console.error("Geocoding exception:", error);
-        throw new Error("Unable to connect to geocoding service. Please check your network.");
+    } catch (err) {
+        if (err.message.startsWith('No match')) throw err;
+        throw new Error('Geocoding is unavailable. Check your connection.');
     }
 }
 
-/**
- * Performs reverse geocoding using OpenStreetMap Nominatim to get city name from coordinates.
- * @param {number} lat - Latitude
- * @param {number} lon - Longitude
- * @returns {Promise<Object>} Location metadata object
- */
-async function reverseGeocode(lat, lon) {
+async function reverse(lat, lon) {
     const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=10`;
 
     try {
-        const response = await fetch(url, {
-            headers: {
-                'User-Agent': 'ZaiimsWeatherApp/1.0'
-            }
+        // nominatim asks for <=1 req/s; okay for a manual "nearby" click
+        const res = await fetch(url, {
+            headers: { 'User-Agent': 'zaiim-weather/1.0' }
         });
+        if (!res.ok) throw new Error(`nominatim ${res.status}`);
 
-        if (!response.ok) {
-            throw new Error("Reverse geocoding network error");
-        }
-
-        const data = await response.json();
-        const address = data.address || {};
-        const name = address.city || address.town || address.village || address.county || "Current Location";
-        const country = address.country || "";
-        const admin1 = address.state || address.region || "";
-
+        const addr = (await res.json()).address || {};
         return {
             latitude: lat,
             longitude: lon,
-            name: name,
-            country: country,
-            admin1: admin1
+            name: addr.city || addr.town || addr.village || addr.county || 'Current location',
+            country: addr.country || '',
+            admin1: addr.state || addr.region || ''
         };
-    } catch (error) {
-        console.warn("Reverse geocoding warning, falling back to coordinates:", error);
+    } catch {
         return {
             latitude: lat,
             longitude: lon,
-            name: "Current Location",
-            country: "",
-            admin1: `Lat: ${lat.toFixed(2)}, Lon: ${lon.toFixed(2)}`
+            name: 'Current location',
+            country: '',
+            admin1: `${lat.toFixed(2)}, ${lon.toFixed(2)}`
         };
     }
 }
 
-/**
- * Fetches comprehensive weather forecast data from Open-Meteo.
- * @param {number} lat - Latitude
- * @param {number} lon - Longitude
- * @param {string} unit - Temperature unit ('celsius' or 'fahrenheit')
- * @returns {Promise<Object>} Complete weather data payload
- */
-async function fetchWeather(lat, lon, unit = 'celsius') {
-    const tempUnitParam = unit === 'fahrenheit' ? 'fahrenheit' : 'celsius';
-    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m,pressure_msl&hourly=temperature_2m,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min,uv_index_max,sunrise,sunset&timezone=auto&temperature_unit=${tempUnitParam}&wind_speed_unit=kmh`;
+async function getWx(lat, lon, unit = 'celsius') {
+    const tempUnit = unit === 'fahrenheit' ? 'fahrenheit' : 'celsius';
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m,pressure_msl&hourly=temperature_2m,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min,uv_index_max,sunrise,sunset&timezone=auto&temperature_unit=${tempUnit}&wind_speed_unit=kmh`;
 
-    try {
-        const response = await fetch(url);
-        
-        if (!response.ok) {
-            const errorBody = await response.text();
-            console.error(`Open-Meteo API 400 Bad Request error body:`, errorBody);
-            throw new Error(`Weather service error (${response.status}: Bad Request)`);
-        }
+    const res = await fetch(url).catch(() => {
+        throw new Error('Weather service unreachable.');
+    });
 
-        const data = await response.json();
-        if (!data.current || !data.hourly || !data.daily) {
-            throw new Error("Incomplete weather payload received from server.");
-        }
+    if (!res.ok) throw new Error(`Weather service returned ${res.status}`);
 
-        return data;
-    } catch (error) {
-        if (error.message.includes("Weather service error") || error.message.includes("Incomplete weather")) {
-            throw error;
-        }
-        console.error("Weather fetch exception:", error);
-        throw new Error("Failed to fetch weather forecast. Please check your network connection.");
+    const data = await res.json();
+    if (!data.current || !data.hourly || !data.daily) {
+        throw new Error('Incomplete weather payload.');
     }
+
+    return data;
 }
