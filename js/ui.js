@@ -109,7 +109,7 @@ function renderWx(loc, wx) {
     dom.city.textContent = loc.name;
     const region = [loc.admin1, loc.country].filter(Boolean).join(', ');
     dom.region.textContent = region || `${loc.latitude.toFixed(2)}, ${loc.longitude.toFixed(2)}`;
-    dom.time.textContent = `updated ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+    dom.time.textContent = `local ${new Date(cur.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
 
     dom.temp.textContent = Math.round(cur.temperature_2m);
     dom.tempUnit.textContent = unitSym();
@@ -137,11 +137,12 @@ function renderWx(loc, wx) {
     dom.pressureNote.textContent = pressureNote(pressure);
 
     dom.hours.innerHTML = '';
-    const now = Date.now();
+    const now = new Date(cur.time).getTime();
     const start = Math.max(0, hours.time.findIndex((t) => new Date(t).getTime() >= now));
 
-    // open-meteo returns local wall time without an offset, so this drifts around dst
-    // TODO: derive the offset from wx.utc_offset_seconds instead
+    // open-meteo times are location wall time with no offset; anchoring to current.time
+    // keeps the strip in the right place, but dst still bites
+    // TODO: format from utc_offset_seconds instead of parsing wall time
     for (let i = start; i < start + 24 && i < hours.time.length; i++) {
         const d = new Date(hours.time[i]);
         const el = document.createElement('div');
