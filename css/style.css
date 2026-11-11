@@ -130,16 +130,6 @@ svg {
     letter-spacing: -0.01em;
 }
 
-.brand-tag {
-    font-family: var(--mono);
-    font-size: 10px;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--dim);
-    padding-left: 8px;
-    border-left: 1px solid var(--line);
-}
-
 .actions {
     display: flex;
     align-items: center;
@@ -1040,10 +1030,6 @@ svg {
     .search-wrapper {
         flex: 0 0 auto;
         width: 100%;
-    }
-
-    .brand-tag {
-        display: none;
     }
 
     .temp {

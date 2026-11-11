@@ -1,4 +1,4 @@
-# zaiim weather
+# Weather App
 
 [![Lint](https://github.com/Zaiim23/weather-app/actions/workflows/lint.yml/badge.svg)](https://github.com/Zaiim23/weather-app/actions/workflows/lint.yml)
 
