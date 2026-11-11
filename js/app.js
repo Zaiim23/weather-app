@@ -159,7 +159,10 @@ function locate() {
     );
 }
 
+let loadId = 0;
+
 async function loadWx(loc, save = true) {
+    const id = ++loadId;
     showLoading();
     state.loc = loc;
 
@@ -169,9 +172,11 @@ async function loadWx(loc, save = true) {
 
     try {
         const wx = await getWx(loc.latitude, loc.longitude, state.unit, state.precipUnit);
+        if (id !== loadId) return;
         renderWx(loc, wx);
         showDash();
     } catch (err) {
+        if (id !== loadId) return;
         showToast(err.message);
         showEmpty();
     }

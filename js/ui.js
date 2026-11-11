@@ -180,12 +180,20 @@ function renderWx(loc, wx) {
         const left = Math.min(96, Math.max(0, ((lo - minAll) / range) * 100));
         const width = Math.max(4, Math.min(100 - left, ((hi - lo) / range) * 100));
 
-        const el = document.createElement('div');
-        el.className = 'drow';
-        el.innerHTML = `
+        const group = document.createElement('div');
+        group.className = 'dgroup';
+
+        const row = document.createElement('div');
+        row.className = 'drow';
+        row.setAttribute('role', 'button');
+        row.setAttribute('tabindex', '0');
+        row.setAttribute('aria-expanded', 'false');
+        row.setAttribute('aria-controls', `day-${i}`);
+        row.innerHTML = `
             <div class="dday">
                 <span class="dname">${i === 0 ? 'Today' : d.toLocaleDateString('en-US', { weekday: 'short' })}</span>
                 <span class="ddate">${d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
+                <span class="dcaret" aria-hidden="true"></span>
             </div>
             <div class="dcond">
                 <i data-lucide="${info.icon}"></i>
@@ -198,10 +206,76 @@ function renderWx(loc, wx) {
             <div class="dbar"><span class="dfill" style="left:${left}%;width:${width}%"></span></div>
             <span class="dhigh">${fmtTemp(hi)}</span>
         `;
-        dom.days.appendChild(el);
+
+        const details = document.createElement('div');
+        details.className = 'day-details';
+        details.id = `day-${i}`;
+        details.setAttribute('aria-hidden', 'true');
+        details.innerHTML = `<div class="day-inner"><div class="day-body">${dayDetails(iso, hours)}</div></div>`;
+
+        const toggle = () => {
+            const open = group.classList.toggle('open');
+            row.setAttribute('aria-expanded', String(open));
+            details.setAttribute('aria-hidden', String(!open));
+        };
+
+        row.addEventListener('click', toggle);
+        row.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                toggle();
+            }
+        });
+
+        group.append(row, details);
+        dom.days.appendChild(group);
     });
 
     lucide.createIcons();
+}
+
+function dayDetails(iso, hours) {
+    const idx = [];
+    for (let i = 0; i < hours.time.length; i++) {
+        if (hours.time[i].startsWith(iso)) idx.push(i);
+    }
+
+    if (!idx.length) {
+        return '<p class="detail-note">No hourly data for this day.</p>';
+    }
+
+    const probs = hours.precipitation_probability || [];
+    const amounts = hours.precipitation || [];
+    const wet = idx.some((i) => (probs[i] ?? 0) > 0 || (amounts[i] ?? 0) > 0);
+
+    const cells = idx.map((i) => {
+        const prob = Math.round(probs[i] ?? 0);
+        const time = hours.time[i].slice(11, 16);
+        const amount = fmtPrecip(amounts[i] ?? 0);
+        return `
+            <div class="dhour" title="${time} · ${amount}">
+                <span class="dtime">${time}</span>
+                <span class="dtemp">${fmtTemp(hours.temperature_2m[i])}</span>
+                <span class="dprob${prob >= 40 ? ' wet' : ''}">${prob}%</span>
+            </div>
+        `;
+    }).join('');
+
+    const date = new Date(`${iso}T12:00:00`).toLocaleDateString('en-US', {
+        weekday: 'short',
+        month: 'short',
+        day: 'numeric'
+    });
+    const note = wet ? '' : '<p class="detail-note">No precipitation expected.</p>';
+
+    return `
+        <div class="detail-head">
+            <span class="detail-title">Hourly · ${date}</span>
+            <span class="detail-meta">${unitSym()} · ${precipSym()}</span>
+        </div>
+        ${note}
+        <div class="detail-hours">${cells}</div>
+    `;
 }
 
 function showOnly(view) {

@@ -626,16 +626,21 @@ svg {
     text-align: right;
 }
 
-.drow {
-    min-height: 36px;
+.dgroup {
     border-bottom: 1px solid var(--line);
 }
 
-.drow:last-child {
+.dgroup:last-child {
     border-bottom: 0;
 }
 
-.drow:hover {
+.drow {
+    min-height: 36px;
+    cursor: pointer;
+}
+
+.drow:hover,
+.dgroup.open .drow {
     background: var(--panel-2);
 }
 
@@ -655,6 +660,31 @@ svg {
     font-family: var(--mono);
     font-size: 10px;
     color: var(--dim);
+}
+
+.dcaret {
+    width: 10px;
+    height: 10px;
+    margin-left: auto;
+    align-self: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+}
+
+.dcaret::before {
+    content: "";
+    width: 5px;
+    height: 5px;
+    border-right: 1px solid var(--dim);
+    border-bottom: 1px solid var(--dim);
+    transform: rotate(-45deg);
+    transition: transform 150ms ease;
+}
+
+.dgroup.open .dcaret::before {
+    transform: rotate(45deg);
 }
 
 .dcond {
@@ -726,6 +756,121 @@ svg {
     bottom: 0;
     background: var(--accent);
     border-radius: 2px;
+}
+
+.day-details {
+    display: grid;
+    grid-template-rows: 0fr;
+    visibility: hidden;
+    transition: grid-template-rows 160ms ease, visibility 0s linear 160ms;
+}
+
+.dgroup.open .day-details {
+    grid-template-rows: 1fr;
+    visibility: visible;
+    transition: grid-template-rows 160ms ease, visibility 0s;
+}
+
+.day-inner {
+    overflow: hidden;
+    min-height: 0;
+}
+
+.day-body {
+    padding: 8px 12px 10px;
+    background: var(--panel-2);
+    border-top: 1px solid var(--line);
+}
+
+.detail-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 6px;
+}
+
+.detail-title {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--dim);
+}
+
+.detail-meta {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--dim);
+}
+
+.detail-note {
+    margin-bottom: 6px;
+    font-size: 11px;
+    color: var(--text-2);
+}
+
+.detail-hours {
+    display: flex;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    border: 1px solid var(--line);
+    background: var(--panel);
+    scrollbar-width: thin;
+    scrollbar-color: var(--line-2) transparent;
+}
+
+.detail-hours::-webkit-scrollbar {
+    height: 5px;
+}
+
+.detail-hours::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.detail-hours::-webkit-scrollbar-thumb {
+    background: var(--line-2);
+    border-radius: 3px;
+}
+
+.dhour {
+    flex: 0 0 62px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    padding: 6px 4px;
+    border-right: 1px solid var(--line);
+}
+
+.dhour:last-child {
+    border-right: 0;
+}
+
+.dhour:hover {
+    background: var(--panel-2);
+}
+
+.dtime {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--dim);
+}
+
+.dtemp {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text);
+}
+
+.dprob {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-2);
+}
+
+.dprob.wet {
+    color: var(--accent);
 }
 
 .state-card {
@@ -937,5 +1082,31 @@ svg {
         left: 12px;
         right: 12px;
         max-width: none;
+    }
+
+    .day-body {
+        padding: 8px;
+    }
+
+    .dhour {
+        flex-basis: 56px;
+    }
+}
+
+@media (max-width: 360px) {
+    .dhead,
+    .drow {
+        grid-template-columns: minmax(56px, 1fr) minmax(38px, 1fr) 72px 28px 32px;
+        gap: 4px;
+        padding: 0 6px;
+    }
+
+    .dday,
+    .dcond {
+        gap: 4px;
+    }
+
+    .day-body {
+        padding: 6px;
     }
 }
