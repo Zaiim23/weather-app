@@ -10,9 +10,9 @@ A small weather dashboard built with vanilla JS. It pulls current conditions, an
 
 - Debounced location search with keyboard navigation and autocomplete
 - Current temperature, high/low, feels-like, humidity, wind, UV and pressure
-- Scrollable 24-hour forecast and a seven-day temperature range table
+- Scrollable 24-hour forecast and a seven-day temperature range table with expandable hourly detail per day
 - Geolocation with reverse geocoding, falling back to coordinates
-- °C/°F toggle and light/dark theme persisted in `localStorage`
+- °C/°F and mm/in toggles plus light/dark theme persisted in `localStorage`
 - Flat, high-density UI with system-friendly sans and mono type
 
 ## Data
