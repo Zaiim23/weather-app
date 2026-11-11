@@ -98,8 +98,6 @@ svg {
     text-align: center;
 }
 
-/* top bar */
-
 .top {
     border-bottom: 1px solid var(--line);
 }
@@ -191,8 +189,6 @@ svg {
     min-width: 38px;
     justify-content: center;
 }
-
-/* toolbar */
 
 .main {
     flex: 1;
@@ -359,8 +355,6 @@ svg {
     color: var(--text);
 }
 
-/* panels */
-
 .dash {
     display: flex;
     flex-direction: column;
@@ -397,8 +391,6 @@ svg {
     color: var(--dim);
 }
 
-/* current conditions */
-
 .now-grid {
     display: grid;
     grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
@@ -424,6 +416,10 @@ svg {
     font-weight: 600;
     letter-spacing: -0.02em;
     line-height: 1.2;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .loc span {
@@ -543,8 +539,6 @@ svg {
     white-space: nowrap;
 }
 
-/* hourly */
-
 .hours {
     display: flex;
     overflow-x: auto;
@@ -601,8 +595,6 @@ svg {
     font-size: 12px;
     color: var(--text);
 }
-
-/* forecast */
 
 .dhead,
 .drow {
@@ -700,6 +692,7 @@ svg {
     background: var(--line);
     border-radius: 2px;
     position: relative;
+    overflow: hidden;
 }
 
 .dfill {
@@ -709,8 +702,6 @@ svg {
     background: var(--accent);
     border-radius: 2px;
 }
-
-/* states */
 
 .state-card {
     display: flex;
@@ -771,8 +762,6 @@ svg {
     height: 56px;
 }
 
-/* toast */
-
 .toast {
     position: fixed;
     top: 14px;
@@ -808,8 +797,6 @@ svg {
     color: var(--ok);
 }
 
-/* footer */
-
 .foot {
     border-top: 1px solid var(--line);
 }
@@ -834,8 +821,6 @@ svg {
 .foot a:hover {
     color: var(--text);
 }
-
-/* focus */
 
 :focus-visible {
     outline: 2px solid var(--accent);
