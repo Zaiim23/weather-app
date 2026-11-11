@@ -599,7 +599,7 @@ svg {
 .dhead,
 .drow {
     display: grid;
-    grid-template-columns: 132px minmax(140px, 1fr) 46px minmax(110px, 220px) 46px;
+    grid-template-columns: 132px minmax(120px, 1fr) 104px 46px minmax(110px, 220px) 46px;
     align-items: center;
     gap: 10px;
     padding: 0 12px;
@@ -613,6 +613,13 @@ svg {
     letter-spacing: 0.08em;
     text-transform: uppercase;
     color: var(--dim);
+}
+
+.dhead > span {
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .dhead .num {
@@ -670,6 +677,24 @@ svg {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+}
+
+.dprecip {
+    display: flex;
+    align-items: baseline;
+    justify-content: flex-end;
+    gap: 5px;
+    font-family: var(--mono);
+    font-size: 11px;
+    white-space: nowrap;
+}
+
+.dprecip .dsum {
+    color: var(--text-2);
+}
+
+.dprecip .dsep {
+    color: var(--dim);
 }
 
 .dlow,
@@ -882,11 +907,29 @@ svg {
 
     .dhead,
     .drow {
-        grid-template-columns: minmax(96px, 1fr) minmax(90px, 1fr) 40px 44px;
+        grid-template-columns: minmax(74px, 1fr) minmax(54px, 1fr) 84px 34px 40px;
+        gap: 6px;
+        padding: 0 8px;
     }
 
     .dhead .range,
     .drow .dbar {
+        display: none;
+    }
+
+    .ddate {
+        display: none;
+    }
+
+    .dprecip {
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 0;
+        font-size: 10px;
+        line-height: 1.2;
+    }
+
+    .dprecip .dsep {
         display: none;
     }
 

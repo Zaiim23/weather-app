@@ -46,6 +46,11 @@ const fmtTemp = (v) => `${Math.round(v)}°`;
 const unitSym = () => state.unit === 'fahrenheit' ? '°F' : '°C';
 const precipSym = () => state.precipUnit === 'inch' ? 'in' : 'mm';
 
+function fmtPrecip(v) {
+    const n = Number(v) || 0;
+    return `${n.toFixed(n > 0 && n < 0.1 ? 2 : 1)} ${precipSym()}`;
+}
+
 function setThemeIcon(theme) {
     dom.themeBtn.innerHTML = `<i data-lucide="${theme === 'light' ? 'moon' : 'sun'}"></i>`;
     lucide.createIcons();
@@ -168,6 +173,8 @@ function renderWx(loc, wx) {
         const d = new Date(`${iso}T12:00:00`);
         const hi = today.temperature_2m_max[i];
         const lo = today.temperature_2m_min[i];
+        const prob = Math.round(today.precipitation_probability_max?.[i] ?? 0);
+        const sum = today.precipitation_sum?.[i] ?? 0;
         const info = wxInfo(today.weather_code[i]);
 
         const left = Math.min(96, Math.max(0, ((lo - minAll) / range) * 100));
@@ -184,6 +191,9 @@ function renderWx(loc, wx) {
                 <i data-lucide="${info.icon}"></i>
                 <span>${info.text}</span>
             </div>
+            <span class="dprecip">
+                <span>${prob}%</span><span class="dsep">·</span><span class="dsum">${fmtPrecip(sum)}</span>
+            </span>
             <span class="dlow">${fmtTemp(lo)}</span>
             <div class="dbar"><span class="dfill" style="left:${left}%;width:${width}%"></span></div>
             <span class="dhigh">${fmtTemp(hi)}</span>
