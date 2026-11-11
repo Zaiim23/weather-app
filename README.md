@@ -1,64 +1,55 @@
-# ⛅ Zaiim's Weather App
+# zaiim weather
 
 [![Lint](https://github.com/Zaiim23/weather-app/actions/workflows/lint.yml/badge.svg)](https://github.com/Zaiim23/weather-app/actions/workflows/lint.yml)
 
-### [🔴 Live Demo](https://zaiim23.github.io/weather-app/)
+### [Live demo](https://zaiim23.github.io/weather-app/)
 
-A high-end, production-ready weather web application designed with the precision of Apple, Linear, and Vercel. Built with vanilla JavaScript (ES6+), HTML5, and CSS3, featuring smart debounced search autocomplete, real-time hourly and 7-day forecasts, geolocation support, and a sleek dark glassmorphism UI with zero emojis.
+A small weather dashboard built with vanilla JS. It pulls current conditions, an hourly strip and a seven-day forecast from Open-Meteo. No build step and no API key.
 
----
+## Features
 
-## ✨ Key Features
+- Debounced location search with keyboard navigation and autocomplete
+- Current temperature, high/low, feels-like, humidity, wind, UV and pressure
+- Scrollable 24-hour forecast and a seven-day temperature range table
+- Geolocation with reverse geocoding, falling back to coordinates
+- °C/°F toggle and light/dark theme persisted in `localStorage`
+- Flat, high-density UI with system-friendly sans and mono type
 
-- **Smart Search with Autocomplete**:
-  - Debounced search bar (~300ms) with instant dropdown suggestions.
-  - Full keyboard navigation (Arrow keys, Enter to select, Escape to close).
-- **High-End Minimalist Aesthetic**:
-  - Deep dark mode palette (Zinc/Slate) with vibrant electric blue accents and subtle backdrop glassmorphism.
-  - **Zero Emojis**: 100% professional UI utilizing crisp Lucide SVG icons.
-- **Comprehensive Meteorological Data**:
-  - Current weather hero card with high/low temperatures and feels-like metrics.
-  - Interactive metrics grid (Humidity, Wind Speed, UV Index, and Surface Pressure).
-  - Horizontal scrollable hourly forecast timeline (next 24 hours).
-  - 7-day extended forecast with relative temperature range distribution bars.
-- **Resilient Error Handling & UI States**:
-  - Graceful top-center sliding toast notifications for failed searches or network errors.
-  - Skeleton loading shimmers and minimalist welcome states.
-- **Client-Side Perfection**:
-  - No backend server or API keys required, powered by the open **Open-Meteo API**.
-  - Unit toggle (°C / °F) with persistent storage via `localStorage`.
+## Data
 
----
+- [Open-Meteo forecast](https://open-meteo.com/) for weather data
+- [Open-Meteo geocoding](https://open-meteo.com/) for search and autocomplete
+- [Nominatim](https://nominatim.openstreetmap.org/) for reverse geocoding. Keep requests under 1/s.
 
-## 🔌 API Credit
-
-- **Geocoding API**: [Open-Meteo Geocoding API](https://open-meteo.com/) for location search and autocomplete suggestions.
-- **Forecast API**: [Open-Meteo Forecast API](https://open-meteo.com/) for hyper-accurate weather metrics.
-
----
-
-## 📂 File Structure
+## Structure
 
 ```text
 simple-weather-app/
-├── index.html          # Semantic HTML markup & Lucide SVG integration
+├── index.html          # panels, toolbar, state containers
 ├── css/
-│   └── style.css       # Premium dark glassmorphism stylesheet
+│   └── style.css       # tokens, layout, light/dark themes
 ├── js/
-│   ├── api.js          # Open-Meteo fetch wrappers & WMO weather code mapping
-│   ├── ui.js           # DOM caching, dashboard rendering, & UI state helpers
-│   └── app.js          # Application state, debounce, event listeners, & loading flow
+│   ├── api.js          # fetch helpers and WMO code mapping
+│   ├── ui.js           # DOM cache and rendering
+│   └── app.js          # state, events, loading flow
 ├── .github/
 │   └── workflows/
-│       └── lint.yml    # JavaScript syntax, asset, and CSS checks
+│       └── lint.yml    # syntax, asset and CSS brace checks
 ├── LICENSE
-└── README.md           # Project documentation
+└── README.md
 ```
 
----
+## Run locally
 
-## 🏃‍♂️ How to Run Locally
+Open `index.html` in a browser, or serve the folder with any static server:
 
-1. Clone or download this repository.
-2. Open the `simple-weather-app` folder.
-3. Open `index.html` directly in any modern web browser (Chrome, Firefox, Safari, Edge), or use the **Live Server** extension in VS Code for hot-reloading development.
+```sh
+python -m http.server 8000
+```
+
+Then visit `http://localhost:8000`.
+
+## Notes
+
+- Open-Meteo returns location-local timestamps without an offset. The hourly strip anchors to `current.time`, but DST still needs work (see the TODO in `js/ui.js`).
+- Reverse geocoding uses Nominatim's public endpoint; the UA header is set in `js/api.js`.
